@@ -51,9 +51,32 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
+        linked_pair = LinkedPair(key, value)
+        #if something is stored at the index
+        if self.storage[index]:
+            #set current node to first node in the bucket
+            curr_lp = self.storage[index]
+            
+            #if the key matches
+            if curr_lp.key == key:
+                #overwrite the value for that key
+                curr_lp.value = value
 
+            else: #if key didnt match
+                #itrate through the chain of nodes in this bucket
+                while curr_lp.next:
+                    #update current node to the next node
+                    curr_lp = curr_lp.next
+                    if curr_lp.key == key:
+                        curr_lp.value = value
+                        return
+                #if the end of the chain is reached and no matching key is found, add the node to the end of the chain
+                curr_lp.next = linked_pair
 
+        #if the bucket at this index was empty, add the node to the bucket
+        else:
+            self.storage[index] = linked_pair
 
     def remove(self, key):
         '''
@@ -63,8 +86,29 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
-
+        index = self._hash_mod(key)
+        #If something is stored at the index
+        if self.storage[index]: 
+            #set the first item to curr_lp var
+            curr_lp = self.storage[index]
+            #if key at first item matches the key we want to remove: 
+            if curr_lp.key == key: 
+                #remove the node by re-assigning the first node in the storage at that index as the next node in the chain and return
+                self.storage[index] = curr_lp.next
+                return
+            #if the first node key doesnt match, iterate through the rest of the bucket checking for matching key:
+            #if next node is None, break the loop and print 'key not found'
+            while curr_lp.next: 
+                #if next node key matches
+                if curr_lp.next.key == key:
+                    #change the next node to the node after the next node (thereby removing the matching key node from the chain)
+                    curr_lp.next = curr_lp.next.next
+                    return
+                #if next node key doesnt match
+                else:
+                    #move on to next node in the chain
+                    curr_lp = curr_lp.next
+        print('Warning- key not found')
 
     def retrieve(self, key):
         '''
@@ -74,8 +118,15 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
-
+        index = self._hash_mod(key)
+        if self.storage[index]:
+            curr_lp = self.storage[index]
+            while curr_lp:
+                if curr_lp.key == key:
+                    return curr_lp.value
+                else:
+                    curr_lp = curr_lp.next
+        return None
 
     def resize(self):
         '''
@@ -84,8 +135,15 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
-
+        old_storage = self.storage
+        self.capacity *= 2
+        self.storage = [None] * self.capacity
+        
+        for item in old_storage:
+            curr_lp = item
+            while curr_lp:
+                self.insert(curr_lp.key, curr_lp.value)
+                curr_lp = curr_lp.next              
 
 
 if __name__ == "__main__":
