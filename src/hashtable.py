@@ -64,7 +64,7 @@ class HashTable:
                 curr_lp.value = value
 
             else: #if key didnt match
-                #itrate through the chain of nodes in this bucket
+                #iterate through the chain of nodes in this bucket
                 while curr_lp.next:
                     #update current node to the next node
                     curr_lp = curr_lp.next
@@ -119,13 +119,17 @@ class HashTable:
         Fill this in.
         '''
         index = self._hash_mod(key)
+        #if something is stored at the index bucket:
         if self.storage[index]:
-            curr_lp = self.storage[index]
+            curr_lp = self.storage[index] #assign current node
+            #iterate thru the chain searching for matching key
             while curr_lp:
-                if curr_lp.key == key:
+                #if matching key found, return the value
+                if curr_lp.key == key: 
                     return curr_lp.value
                 else:
                     curr_lp = curr_lp.next
+        #if matching key not found:
         return None
 
     def resize(self):
@@ -136,13 +140,18 @@ class HashTable:
         Fill this in.
         '''
         old_storage = self.storage
+        #double the capacity and set up the new storage of Nones
         self.capacity *= 2
         self.storage = [None] * self.capacity
         
+        #iterate thru the buckets from previous
         for item in old_storage:
+            #start with first node
             curr_lp = item
             while curr_lp:
+                #add the node to the new storage
                 self.insert(curr_lp.key, curr_lp.value)
+                #move on to the next node in the chain
                 curr_lp = curr_lp.next              
 
 
